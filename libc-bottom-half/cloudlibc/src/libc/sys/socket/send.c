@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <wasi/api.h>
+#include <wasi/wasio.h>
 #include <errno.h>
 
 ssize_t send(int socket, const void *buffer, size_t length, int flags) {
@@ -36,7 +37,10 @@ ssize_t send(int socket, const void *buffer, size_t length, int flags) {
   __wasi_errno_t error = __wasi_sock_send(socket, &si, &so);
 #else
   size_t so_datalen;
-  __wasi_errno_t error = __wasi_sock_send(socket, si_data, si_data_len, si_flags, &so_datalen);
+  cancellation_token_t ct;
+  usercontext_t uctx;
+  __wasi_errno_t error = wasio_socket_send(socket, si_data, si_data_len, si_flags, &so_datalen, 0, &ct);
+  if(error == 0) wasio_wait(&error, &uctx);
 #endif
   if (error != 0) {
     errno = errno_fixup_socket(socket, error);

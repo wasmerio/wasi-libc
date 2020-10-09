@@ -8,6 +8,7 @@
 
 #include <assert.h>
 #include <wasi/api.h>
+#include <wasi/wasio.h>
 #include <errno.h>
 #include <stdint.h>
 
@@ -47,10 +48,15 @@ ssize_t recv(int socket, void *restrict buffer, size_t length, int flags) {
 #else
   size_t ro_datalen;
   __wasi_roflags_t ro_flags;
-  __wasi_errno_t error = __wasi_sock_recv(socket,
+
+  cancellation_token_t ct;
+  usercontext_t uctx;
+  __wasi_errno_t error = wasio_socket_recv(socket,
                                           ri_data, ri_data_len, ri_flags,
                                           &ro_datalen,
-                                          &ro_flags);
+                                          &ro_flags,
+                                          0, &ct);
+  if(error == 0) wasio_wait(&error, &uctx);
 #endif
   if (error != 0) {
     errno = errno_fixup_socket(socket, error);
