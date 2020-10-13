@@ -87,6 +87,40 @@ WASIO_IMPORT("socket_recv") __wasi_errno_t wasio_socket_recv(
     cancellation_token_t *ct_out
 );
 
+WASIO_IMPORT("socket_bind") __wasi_errno_t wasio_socket_bind(
+    __wasi_fd_t fd,
+    const void *sockaddr,
+    uint32_t sockaddr_size
+);
+
+WASIO_IMPORT("socket_listen") __wasi_errno_t wasio_socket_listen(
+    __wasi_fd_t fd
+);
+
+WASIO_IMPORT("socket_accept") __wasi_errno_t wasio_socket_accept(
+    __wasi_fd_t *fd_out,
+    void *sockaddr,
+    uint32_t sockaddr_size
+);
+
+WASIO_IMPORT("socket_pre_accept") __wasi_errno_t wasio_socket_pre_accept(
+    __wasi_fd_t fd,
+    usercontext_t uctx,
+    cancellation_token_t *ct_out
+);
+
+WASIO_IMPORT("socket_local_addr") __wasi_errno_t wasio_socket_local_addr(
+    __wasi_fd_t fd,
+    void *addr,
+    uint32_t *addrlen
+);
+
+WASIO_IMPORT("socket_remote_addr") __wasi_errno_t wasio_socket_remote_addr(
+    __wasi_fd_t fd,
+    void *addr,
+    uint32_t *addrlen
+);
+
 
 #undef WASIO_IMPORT
 
