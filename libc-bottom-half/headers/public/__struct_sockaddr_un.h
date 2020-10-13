@@ -8,6 +8,7 @@
 
 struct sockaddr_un {
     _Alignas(max_align_t) sa_family_t sun_family;
+	char sun_path[108];
 };
 
 #endif

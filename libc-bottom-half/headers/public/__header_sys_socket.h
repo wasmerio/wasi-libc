@@ -30,6 +30,11 @@
 #define AF_INET6 2
 #define AF_UNIX 3
 
+#define PF_UNSPEC 0
+#define PF_INET 1
+#define PF_INET6 2
+#define PF_UNIX 3
+
 #ifdef __cplusplus
 extern "C" {
 #endif

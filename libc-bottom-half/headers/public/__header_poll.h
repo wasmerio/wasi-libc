@@ -14,6 +14,8 @@
 #define POLLHUP 0x2000
 #define POLLNVAL 0x4000
 
+#define POLLPRI 0
+
 #ifdef __cplusplus
 extern "C" {
 #endif

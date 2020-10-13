@@ -275,7 +275,6 @@ MUSL_OMIT_HEADERS += \
     "sys/auxv.h" \
     "pwd.h" "shadow.h" "grp.h" \
     "mntent.h" \
-    "netdb.h" \
     "resolv.h" \
     "pty.h" \
     "dlfcn.h" \

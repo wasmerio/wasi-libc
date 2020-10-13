@@ -42,6 +42,10 @@ int getsockopt(int socket, int level, int option_name,
       value = fsb.fs_filetype;
       break;
     }
+    case SO_ERROR: {
+      value = 0;
+      break;
+    }
     default: {
       errno = ENOPROTOOPT;
       return -1;

@@ -205,6 +205,8 @@ struct linger {
 #define AF_XDP          PF_XDP
 #define AF_MAX          PF_MAX
 
+#endif
+
 #ifndef SO_DEBUG
 #define SO_DEBUG        1
 #define SO_REUSEADDR    2
@@ -298,6 +300,8 @@ struct linger {
 #define SCM_TXTIME              SO_TXTIME
 #define SO_BINDTOIFINDEX        62
 #define SO_DETACH_REUSEPORT_BPF 68
+
+#ifdef __wasilibc_unmodified_upstream /* Use alternate WASI libc headers */
 
 #ifndef SOL_SOCKET
 #define SOL_SOCKET      1
@@ -401,16 +405,16 @@ int socketpair (int, int, int, int [2]);
 int shutdown (int, int);
 
 int connect (int, const struct sockaddr *, socklen_t);
-#ifdef __wasilibc_unmodified_upstream /* WASI has no bind/connect/listen/accept */
 int bind (int, const struct sockaddr *, socklen_t);
 int listen (int, int);
 int accept (int, struct sockaddr *__restrict, socklen_t *__restrict);
 int accept4(int, struct sockaddr *__restrict, socklen_t *__restrict, int);
+#ifdef __wasilibc_unmodified_upstream /* WASI has no bind/connect/listen/accept */
 #endif
 
-#ifdef __wasilibc_unmodified_upstream /* WASI has no getsockname/getpeername */
 int getsockname (int, struct sockaddr *__restrict, socklen_t *__restrict);
 int getpeername (int, struct sockaddr *__restrict, socklen_t *__restrict);
+#ifdef __wasilibc_unmodified_upstream /* WASI has no getsockname/getpeername */
 #endif
 
 ssize_t send (int, const void *, size_t, int);
@@ -425,8 +429,8 @@ ssize_t recvmsg (int, struct msghdr *, int);
 #endif
 
 int getsockopt (int, int, int, void *__restrict, socklen_t *__restrict);
-#ifdef __wasilibc_unmodified_upstream /* WASI has no setsockopt */
 int setsockopt (int, int, int, const void *, socklen_t);
+#ifdef __wasilibc_unmodified_upstream /* WASI has no setsockopt */
 #endif
 
 #ifdef __wasilibc_unmodified_upstream /* WASI has no sockatmark */
