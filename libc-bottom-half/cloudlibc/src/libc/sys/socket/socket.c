@@ -54,7 +54,7 @@ int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {
 
     err = wasio_socket_pre_accept(sockfd, 0, &ct);
     if(err == 0) wasio_wait(&err, &uctx);
-    if(err == 0) err = wasio_socket_accept(&conn, addr, addrlen);
+    if(err == 0) err = wasio_socket_accept(&conn, addr, *addrlen);
     if(err) {
         errno = err;
         return -1;
@@ -68,18 +68,6 @@ int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags) {
 
 int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen) {
     return 0;
-}
-
-struct hostent *gethostbyname(const char *name)
-{
-    return NULL;
-}
-
-int gethostbyname_r(const char *name,
-        struct hostent *ret, char *buf, size_t buflen,
-        struct hostent **result, int *h_errnop) {
-    errno = EINVAL;
-    return -1;
 }
 
 int getsockname(int sockfd, struct sockaddr *addr, socklen_t *addrlen) {

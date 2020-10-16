@@ -121,6 +121,16 @@ WASIO_IMPORT("socket_remote_addr") __wasi_errno_t wasio_socket_remote_addr(
     uint32_t *addrlen
 );
 
+WASIO_IMPORT("dns_lookup") __wasi_errno_t wasio_dns_lookup(
+    const char *name,
+    uint32_t name_len,
+    int16_t family,
+    void *output_ptr,
+    uint32_t *output_count_ptr,
+    uint32_t output_size,
+    usercontext_t uctx,
+    cancellation_token_t *ct_out
+);
 
 #undef WASIO_IMPORT
 
