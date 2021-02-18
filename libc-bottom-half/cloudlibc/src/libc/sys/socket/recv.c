@@ -12,13 +12,8 @@
 #include <errno.h>
 #include <stdint.h>
 
-#ifdef __wasilibc_unmodified_upstream
-static_assert(MSG_PEEK == __WASI_SOCK_RECV_PEEK, "Value mismatch");
-static_assert(MSG_WAITALL == __WASI_SOCK_RECV_WAITALL, "Value mismatch");
-#else
 static_assert(MSG_PEEK == __WASI_RIFLAGS_RECV_PEEK, "Value mismatch");
 static_assert(MSG_WAITALL == __WASI_RIFLAGS_RECV_WAITALL, "Value mismatch");
-#endif
 
 ssize_t recv(int socket, void *restrict buffer, size_t length, int flags) {
   // Validate flags.
@@ -29,23 +24,11 @@ ssize_t recv(int socket, void *restrict buffer, size_t length, int flags) {
 
   // Prepare input parameters.
   __wasi_iovec_t iov = {.buf = buffer, .buf_len = length};
-#ifdef __wasilibc_unmodified_upstream // send/recv
-  __wasi_recv_in_t ri = {
-      .ri_data = &iov,
-      .ri_data_len = 1,
-      .ri_flags = flags,
-  };
-#else
   __wasi_iovec_t *ri_data = &iov;
   size_t ri_data_len = 1;
   __wasi_riflags_t ri_flags = flags;
-#endif
 
   // Perform system call.
-#ifdef __wasilibc_unmodified_upstream // send/recv
-  __wasi_recv_out_t ro;
-  __wasi_errno_t error = __wasi_sock_recv(socket, &ri, &ro);
-#else
   size_t ro_datalen;
   __wasi_roflags_t ro_flags;
 
@@ -56,15 +39,12 @@ ssize_t recv(int socket, void *restrict buffer, size_t length, int flags) {
                                           &ro_datalen,
                                           &ro_flags,
                                           0, &ct);
-  if(error == 0) wasio_wait(&error, &uctx);
-#endif
-  if (error != 0) {
+  if(error == 0) {
+    wasio_wait(&error, &uctx);
+  }
+  else {
     errno = errno_fixup_socket(socket, error);
     return -1;
   }
-#ifdef __wasilibc_unmodified_upstream // send/recv
-  return ro.ro_datalen;
-#else
   return ro_datalen;
-#endif
 }

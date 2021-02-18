@@ -100,6 +100,7 @@
 #include <memory.h>
 #include <monetary.h>
 #include <mqueue.h>
+#include <netdb.h>
 #include <netinet/icmp6.h>
 #include <netinet/igmp.h>
 #include <netinet/in.h>
@@ -166,6 +167,8 @@
 #include <wasi/api.h>
 #include <wasi/libc-environ.h>
 #include <wasi/libc-find-relpath.h>
+#include <wasi/libc-nocwd.h>
 #include <wasi/libc.h>
+#include <wasi/wasio.h>
 #include <wchar.h>
 #include <wctype.h>

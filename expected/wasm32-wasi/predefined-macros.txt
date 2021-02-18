@@ -37,6 +37,13 @@
 #define AF_INET6 2
 #define AF_UNIX 3
 #define AF_UNSPEC 0
+#define AI_ADDRCONFIG 0x20
+#define AI_ALL 0x10
+#define AI_CANONNAME 0x02
+#define AI_NUMERICHOST 0x04
+#define AI_NUMERICSERV 0x400
+#define AI_PASSIVE 0x01
+#define AI_V4MAPPED 0x08
 #define ALT_DIGITS 0x2002F
 #define AM_STR 0x20026
 #define ANYMARK 0x01
@@ -46,6 +53,7 @@
 #define ARG_MAX 131072
 #define ARMAG "!<arch>\n"
 #define AT_EACCESS (0x0)
+#define AT_FDCWD (-2)
 #define AT_REMOVEDIR (0x4)
 #define AT_SYMLINK_FOLLOW (0x2)
 #define AT_SYMLINK_NOFOLLOW (0x1)
@@ -191,6 +199,24 @@
 #define EADDRNOTAVAIL __WASI_ERRNO_ADDRNOTAVAIL
 #define EAFNOSUPPORT __WASI_ERRNO_AFNOSUPPORT
 #define EAGAIN __WASI_ERRNO_AGAIN
+#define EAI_ADDRFAMILY -9
+#define EAI_AGAIN -3
+#define EAI_ALLDONE -103
+#define EAI_BADFLAGS -1
+#define EAI_CANCELED -101
+#define EAI_FAIL -4
+#define EAI_FAMILY -6
+#define EAI_IDN_ENCODE -105
+#define EAI_INPROGRESS -100
+#define EAI_INTR -104
+#define EAI_MEMORY -10
+#define EAI_NODATA -5
+#define EAI_NONAME -2
+#define EAI_NOTCANCELED -102
+#define EAI_OVERFLOW -12
+#define EAI_SERVICE -8
+#define EAI_SOCKTYPE -7
+#define EAI_SYSTEM -11
 #define EALREADY __WASI_ERRNO_ALREADY
 #define EBADF __WASI_ERRNO_BADF
 #define EBADID 5
@@ -423,6 +449,7 @@
 #define HIBITL MINLONG
 #define HIBITS MINSHORT
 #define HOST_NAME_MAX 255
+#define HOST_NOT_FOUND 1
 #define HUGE 3.40282346638528859812e+38F
 #define HUGE_VAL ((double)INFINITY)
 #define HUGE_VALF INFINITY
@@ -1142,6 +1169,14 @@
 #define NEW_ENV_VAR 0
 #define NGROUPS 32
 #define NGROUPS_MAX 32
+#define NI_DGRAM 0x10
+#define NI_MAXHOST 255
+#define NI_MAXSERV 32
+#define NI_NAMEREQD 0x08
+#define NI_NOFQDN 0x04
+#define NI_NUMERICHOST 0x01
+#define NI_NUMERICSCOPE 0x100
+#define NI_NUMERICSERV 0x02
 #define NL_ARGMAX 9
 #define NL_CAT_LOCALE 1
 #define NL_LANGMAX 32
@@ -1160,6 +1195,9 @@
 #define NOTAUTH ns_r_notauth
 #define NOTIMP ns_r_notimpl
 #define NOTZONE ns_r_notzone
+#define NO_ADDRESS NO_DATA
+#define NO_DATA 4
+#define NO_RECOVERY 3
 #define NR_ICMP_TYPES 18
 #define NR_ICMP_UNREACH 15
 #define NSLC 18
@@ -1313,12 +1351,17 @@
 #define PAGE_SIZE PAGESIZE
 #define PATH_MAX 4096
 #define PDP_ENDIAN __PDP_ENDIAN
+#define PF_INET 1
+#define PF_INET6 2
+#define PF_UNIX 3
+#define PF_UNSPEC 0
 #define PM_STR 0x20027
 #define POLLERR 0x1000
 #define POLLHUP 0x2000
 #define POLLIN POLLRDNORM
 #define POLLNVAL 0x4000
 #define POLLOUT POLLWRNORM
+#define POLLPRI 0
 #define POLLRDNORM 0x1
 #define POLLWRNORM 0x2
 #define POSIX_CLOSE_RESTART 0
@@ -1469,6 +1512,13 @@
 #define SB 250
 #define SCHAR_MAX 127
 #define SCHAR_MIN (-128)
+#define SCM_TIMESTAMP SO_TIMESTAMP
+#define SCM_TIMESTAMPING SO_TIMESTAMPING
+#define SCM_TIMESTAMPING_OPT_STATS 54
+#define SCM_TIMESTAMPING_PKTINFO 58
+#define SCM_TIMESTAMPNS SO_TIMESTAMPNS
+#define SCM_TXTIME SO_TXTIME
+#define SCM_WIFI_STATUS SO_WIFI_STATUS
 #define SCNd16 __INT16_FMTd__
 #define SCNd32 __INT32_FMTd__
 #define SCNd64 __INT64_FMTd__
@@ -1598,7 +1648,69 @@
 #define SOL_SOCKET 0x7fffffff
 #define SOL_TCP 6
 #define SOL_UDP 17
+#define SO_ACCEPTCONN 30
+#define SO_ATTACH_BPF 50
+#define SO_ATTACH_FILTER 26
+#define SO_ATTACH_REUSEPORT_CBPF 51
+#define SO_ATTACH_REUSEPORT_EBPF 52
+#define SO_BINDTODEVICE 25
+#define SO_BINDTOIFINDEX 62
+#define SO_BPF_EXTENSIONS 48
+#define SO_BROADCAST 6
+#define SO_BSDCOMPAT 14
+#define SO_BUSY_POLL 46
+#define SO_CNX_ADVICE 53
+#define SO_COOKIE 57
+#define SO_DEBUG 1
+#define SO_DETACH_BPF SO_DETACH_FILTER
+#define SO_DETACH_FILTER 27
+#define SO_DETACH_REUSEPORT_BPF 68
+#define SO_DOMAIN 39
+#define SO_DONTROUTE 5
+#define SO_ERROR 4
+#define SO_GET_FILTER SO_ATTACH_FILTER
+#define SO_INCOMING_CPU 49
+#define SO_INCOMING_NAPI_ID 56
+#define SO_KEEPALIVE 9
+#define SO_LINGER 13
+#define SO_LOCK_FILTER 44
+#define SO_MARK 36
+#define SO_MAX_PACING_RATE 47
+#define SO_MEMINFO 55
+#define SO_NOFCS 43
+#define SO_NO_CHECK 11
+#define SO_OOBINLINE 10
+#define SO_PASSCRED 16
+#define SO_PASSSEC 34
+#define SO_PEEK_OFF 42
+#define SO_PEERCRED 17
+#define SO_PEERGROUPS 59
+#define SO_PEERNAME 28
+#define SO_PEERSEC 31
+#define SO_PRIORITY 12
+#define SO_PROTOCOL 38
+#define SO_RCVBUF 8
+#define SO_RCVBUFFORCE 33
+#define SO_RCVLOWAT 18
+#define SO_RCVTIMEO 66
+#define SO_REUSEADDR 2
+#define SO_REUSEPORT 15
+#define SO_RXQ_OVFL 40
+#define SO_SECURITY_AUTHENTICATION 22
+#define SO_SECURITY_ENCRYPTION_NETWORK 24
+#define SO_SECURITY_ENCRYPTION_TRANSPORT 23
+#define SO_SELECT_ERR_QUEUE 45
+#define SO_SNDBUF 7
+#define SO_SNDBUFFORCE 32
+#define SO_SNDLOWAT 19
+#define SO_SNDTIMEO 67
+#define SO_TIMESTAMP 63
+#define SO_TIMESTAMPING 65
+#define SO_TIMESTAMPNS 64
+#define SO_TXTIME 61
 #define SO_TYPE 3
+#define SO_WIFI_STATUS 41
+#define SO_ZEROCOPY 60
 #define SSIZE_MAX LONG_MAX
 #define STATUS ns_o_status
 #define STA_CLK 0x8000
@@ -1827,6 +1939,7 @@
 #define TOREAD 00004
 #define TOWRITE 00002
 #define TRANSIENT 4
+#define TRY_AGAIN 2
 #define TSGID 02000
 #define TSS_DTOR_ITERATIONS 4
 #define TSUID 04000
@@ -2031,6 +2144,7 @@
 #define _MATH_H 
 #define _MONETARY_H 
 #define _MQUEUE_H 
+#define _NETDB_H 
 #define _NETINET_ICMP6_H 
 #define _NETINET_IGMP_H 
 #define _NETINET_IN_H 
@@ -3021,6 +3135,7 @@
 #define __wasi_libc_environ_h 
 #define __wasi_libc_find_relpath_h 
 #define __wasi_libc_h 
+#define __wasi_libc_nocwd_h 
 #define __wasilibc___errno_h 
 #define __wasilibc___errno_values_h 
 #define __wasilibc___fd_set_h 
@@ -3083,6 +3198,7 @@
 #define __wasilibc___typedef_suseconds_t_h 
 #define __wasilibc___typedef_time_t_h 
 #define __wasilibc___typedef_uid_t_h 
+#define __wasio_api_h 
 #define __wasm 1
 #define __wasm32 1
 #define __wasm32__ 1
@@ -3120,6 +3236,8 @@
 #define cbrt(x) __tg_real(cbrt, (x))
 #define ceil(x) __tg_real(ceil, (x))
 #define cimag(x) __tg_complex_retreal(cimag, (x))
+#define cimagf(x) (__builtin_cimagf(x))
+#define cimagl(x) (__builtin_cimagl(x))
 #define clrbit(x,i) __bitop(x,i,&=~)
 #define compl ~
 #define complex _Complex
@@ -3129,6 +3247,8 @@
 #define cosh(x) __tg_real_complex(cosh, (x))
 #define cproj(x) __tg_complex(cproj, (x))
 #define creal(x) __tg_complex_retreal(creal, (x))
+#define crealf(x) (__builtin_crealf(x))
+#define creall(x) (__builtin_creall(x))
 #define creat64 creat
 #define d_fileno d_ino
 #define direct dirent
@@ -3165,6 +3285,8 @@
 #define glob64 glob
 #define glob64_t glob_t
 #define globfree64 globfree
+#define h_addr h_addr_list[0]
+#define h_errno (*__h_errno_location())
 #define howmany(n,d) (((n)+((d)-1))/(d))
 #define htobe16(x) __bswap16(x)
 #define htobe32(x) __bswap32(x)
