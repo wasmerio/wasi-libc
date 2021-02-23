@@ -1,3 +1,7 @@
+#ifndef _WASI_EMULATED_TERMIOS
+#error "WASI lacks a true termios; to enable minimal termios emulation, \
+compile with -D_WASI_EMULATED_TERMIOS and link with -lwasi-emulated-termios"
+#else
 #ifndef	_TERMIOS_H
 #define	_TERMIOS_H
 
@@ -43,4 +47,5 @@ int cfsetspeed(struct termios *, speed_t);
 }
 #endif
 
+#endif
 #endif

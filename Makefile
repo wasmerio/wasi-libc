@@ -56,6 +56,8 @@ LIBWASI_EMULATED_MMAN_SOURCES = \
     $(shell find $(LIBC_BOTTOM_HALF_DIR)/mman -name \*.c)
 LIBWASI_EMULATED_SIGNAL_SOURCES = \
     $(shell find $(LIBC_BOTTOM_HALF_DIR)/signal -name \*.c)
+LIBWASI_EMULATED_TERMIOS_SOURCES = \
+    $(shell find $(LIBC_BOTTOM_HALF_DIR)/termios -name \*.c)
 LIBWASI_EMULATED_SIGNAL_MUSL_SOURCES = \
     $(LIBC_TOP_HALF_MUSL_SRC_DIR)/signal/psignal.c \
     $(LIBC_TOP_HALF_MUSL_SRC_DIR)/string/strsignal.c
@@ -231,6 +233,7 @@ MUSL_PRINTSCAN_NO_FLOATING_POINT_OBJS = $(patsubst %.o,%.no-floating-point.o,$(M
 LIBWASI_EMULATED_MMAN_OBJS = $(call objs,$(LIBWASI_EMULATED_MMAN_SOURCES))
 LIBWASI_EMULATED_SIGNAL_OBJS = $(call objs,$(LIBWASI_EMULATED_SIGNAL_SOURCES))
 LIBWASI_EMULATED_SIGNAL_MUSL_OBJS = $(call objs,$(LIBWASI_EMULATED_SIGNAL_MUSL_SOURCES))
+LIBWASI_EMULATED_TERMIOS_OBJS = $(call objs,$(LIBWASI_EMULATED_TERMIOS_SOURCES))
 
 # These variables describe the locations of various files and
 # directories in the generated sysroot tree.
@@ -303,9 +306,6 @@ MUSL_OMIT_HEADERS += \
     "spawn.h" \
     "sys/membarrier.h" \
     "sys/signalfd.h" \
-    "termios.h" \
-    "sys/termios.h" \
-    "bits/termios.h" \
     "net/if.h" \
     "net/if_arp.h" \
     "net/ethernet.h" \
@@ -332,6 +332,8 @@ $(SYSROOT_LIB)/libc-printscan-no-floating-point.a: $(MUSL_PRINTSCAN_NO_FLOATING_
 $(SYSROOT_LIB)/libwasi-emulated-mman.a: $(LIBWASI_EMULATED_MMAN_OBJS)
 
 $(SYSROOT_LIB)/libwasi-emulated-signal.a: $(LIBWASI_EMULATED_SIGNAL_OBJS) $(LIBWASI_EMULATED_SIGNAL_MUSL_OBJS)
+
+$(SYSROOT_LIB)/libwasi-emulated-termios.a: $(LIBWASI_EMULATED_TERMIOS_OBJS)
 
 %.a:
 	@mkdir -p "$(@D)"
@@ -431,7 +433,8 @@ libc: include_dirs \
     $(SYSROOT_LIB)/libc-printscan-long-double.a \
     $(SYSROOT_LIB)/libc-printscan-no-floating-point.a \
     $(SYSROOT_LIB)/libwasi-emulated-mman.a \
-    $(SYSROOT_LIB)/libwasi-emulated-signal.a
+    $(SYSROOT_LIB)/libwasi-emulated-signal.a \
+    $(SYSROOT_LIB)/libwasi-emulated-termios.a
 
 finish: startup_files libc
 	#
@@ -466,7 +469,7 @@ finish: startup_files libc
 	# Generate a test file that includes all public header files.
 	#
 	cd "$(SYSROOT)" && \
-	  for header in $$(find include -type f -not -name mman.h -not -name signal.h |grep -v /bits/); do \
+	  for header in $$(find include -type f -not -name mman.h -not -name signal.h -not -name termios.h |grep -v /bits/); do \
 	      echo '#include <'$$header'>' | sed 's/include\///' ; \
 	done |LC_ALL=C sort >share/$(MULTIARCH_TRIPLE)/include-all.c ; \
 	cd - >/dev/null
