@@ -120,13 +120,123 @@ int gethostbyname2_r(const char *name, int af,
 	return 0;
 }
 
-struct hostent *gethostbyname(const char *name)
-{
-    return NULL;
-}
-
 int gethostbyname_r(const char *name,
         struct hostent *ret, char *buf, size_t buflen,
         struct hostent **result, int *h_errnop) {
 	return gethostbyname2_r(name, AF_INET, ret, buf, buflen, result, h_errnop);
+}
+
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include "lookup.h"
+
+unsigned long strtoul(const char *restrict s, char **restrict p, int base);
+
+int __lookup_serv(struct service buf[static MAXSERVS], const char *name, int proto, int socktype, int flags)
+{
+	char line[128];
+	int cnt = 0;
+	char *p, *z = "";
+	unsigned long port = 0;
+
+	switch (socktype) {
+	case SOCK_STREAM:
+		switch (proto) {
+		case 0:
+			proto = IPPROTO_TCP;
+		case IPPROTO_TCP:
+			break;
+		default:
+			return EAI_SERVICE;
+		}
+		break;
+	case SOCK_DGRAM:
+		switch (proto) {
+		case 0:
+			proto = IPPROTO_UDP;
+		case IPPROTO_UDP:
+			break;
+		default:
+			return EAI_SERVICE;
+		}
+	case 0:
+		break;
+	default:
+		if (name) return EAI_SERVICE;
+		buf[0].port = 0;
+		buf[0].proto = proto;
+		buf[0].socktype = socktype;
+		return 1;
+	}
+
+	if (name) {
+		if (!*name) return EAI_SERVICE;
+		port = strtoul(name, &z, 10);
+	}
+	if (!*z) {
+		if (port > 65535) return EAI_SERVICE;
+		if (proto != IPPROTO_UDP) {
+			buf[cnt].port = port;
+			buf[cnt].socktype = SOCK_STREAM;
+			buf[cnt++].proto = IPPROTO_TCP;
+		}
+		if (proto != IPPROTO_TCP) {
+			buf[cnt].port = port;
+			buf[cnt].socktype = SOCK_DGRAM;
+			buf[cnt++].proto = IPPROTO_UDP;
+		}
+		return cnt;
+	}
+
+	if (flags & AI_NUMERICSERV) return EAI_NONAME;
+
+	size_t l = strlen(name);
+
+	unsigned char _buf[1032];
+	// return EAI_SERVICE;
+	// return EAI_NONAME;
+	if (proto != IPPROTO_UDP) {
+		buf[cnt].port = port;
+		buf[cnt].socktype = SOCK_STREAM;
+		buf[cnt++].proto = IPPROTO_TCP;
+	}
+	if (proto != IPPROTO_TCP) {
+		buf[cnt].port = port;
+		buf[cnt].socktype = SOCK_DGRAM;
+		buf[cnt++].proto = IPPROTO_UDP;
+	}
+	return cnt;
+
+	//return EAI_SYSTEM;
+}
+
+struct hostent *gethostbyname(const char *name)
+{
+	return gethostbyname2(name, AF_INET);
+}
+
+struct hostent *gethostbyname2(const char *name, int af)
+{
+	static struct hostent *h;
+	size_t size = 63;
+	struct hostent *res;
+	int err;
+	do {
+		free(h);
+		h = malloc(size+=size+1);
+		if (!h) {
+			h_errno = NO_RECOVERY;
+			return 0;
+		}
+		err = gethostbyname2_r(name, af, h,
+			(void *)(h+1), size-sizeof *h, &res, &h_errno);
+	} while (err == ERANGE);
+	return err ? 0 : h;
 }

@@ -1521,6 +1521,12 @@ typedef uint16_t __wasi_riflags_t;
  */
 #define __WASI_RIFLAGS_RECV_PEEK (UINT16_C(1))
 
+
+/**
+ * Returns the flags indicating if the recv data is truncated
+ */
+#define __WASI_RIFLAGS_RECV_DATA_TRUNCATED (UINT16_C(32))
+
 /**
  * On byte-stream sockets, block until the full amount of data can be returned.
  */
